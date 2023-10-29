@@ -7,12 +7,12 @@ Models as Optimizers" (https://arxiv.org/abs/2309.03409).
 
 The code has been verified to work under Python 3.10.13 with the following dependencies:
 
-- openai (0.27.2)
-- google.generativeai (0.1.0)
 - absl-py (2.0.0)
+- google.generativeai (0.1.0)
 - immutabledict (3.0.0)
+- openai (0.27.2)
 
-## Usage:
+## Usage
 
 ### Prompt optimization 
 Use `opro/optimization/optimize_instructions.py`, follow the steps at the top. 
