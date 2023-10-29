@@ -1,0 +1,9 @@
+outputs/
+OWNERS
+BUILD
+METADATA
+.DS_Store
+.coverage
+.vscode
+*.egg-info
+__pycache__/
