@@ -109,7 +109,7 @@ def gen_meta_prompt(
    old_instructions_and_scores (list): a list of (instruction, score, i_step)
      pairs.
    instruction_pos (str): where to put the instruction, one of {'before_QA',
-     'Q_beginning', 'Q_end', 'A_beginning'}.
+     'Q_begin', 'Q_end', 'A_begin'}.
    optimizer_llm_name (str): the name of the LLM used for instruction editing.
    old_instruction_score_threshold (float): only add old instructions with score
      no less than this threshold.
@@ -139,9 +139,9 @@ def gen_meta_prompt(
   """
   assert instruction_pos in {
       "before_Q",
-      "Q_beginning",
+      "Q_begin",
       "Q_end",
-      "A_beginning",
+      "A_begin",
   }, (
       "The instruction position should be either before the question, or at the"
       " beginning of the question, at the end of the question, or at the"
@@ -161,7 +161,7 @@ def gen_meta_prompt(
   meta_prompt = ""
   if meta_prompt_type == "both_instructions_and_exemplars":
     if optimizer_llm_name.lower() in {"gpt-3.5-turbo", "gpt-4"}:
-      if instruction_pos == "A_beginning":
+      if instruction_pos == "A_begin":
         meta_prompt_old_instruction_part = (
             "Your task is to generate the answer starting sentence <Start>."
             " Below are some previous starting sentences with their scores."
@@ -220,26 +220,26 @@ def gen_meta_prompt(
         if include_qa:  # when "Q:" and "A:" are present in the prompt
           if instruction_pos == "before_Q":
             meta_prompt_exemplar_part += f"\ninput:\n<INS>\nQ: {question}\nA:"
-          elif instruction_pos == "Q_beginning":
+          elif instruction_pos == "Q_begin":
             meta_prompt_exemplar_part += f"\ninput:\nQ: <INS>\n{question}\nA:"
           elif instruction_pos == "Q_end":
             meta_prompt_exemplar_part += f"\ninput:\nQ: {question}\n<INS>\nA:"
-          else:  # instruction_pos == "A_beginning"
+          else:  # instruction_pos == "A_begin"
             if optimizer_llm_name.lower() in {"gpt-3.5-turbo", "gpt-4"}:
               meta_prompt_exemplar_part += f"\nQ: {question}\nA: <Start>"
             else:
               assert optimizer_llm_name.lower() == "text-bison"
               meta_prompt_exemplar_part += f"\ninput:\nQ: {question}\nA: <INS>"
         else:  # when there're no "Q:" and "A:" in the prompt
-          assert instruction_pos in {"Q_beginning", "Q_end"}
+          assert instruction_pos in {"Q_begin", "Q_end"}
           if optimizer_llm_name.lower() in {"gpt-3.5-turbo", "gpt-4"}:
-            if instruction_pos == "Q_beginning":
+            if instruction_pos == "Q_begin":
               meta_prompt_exemplar_part += f"\nProblem:\n<INS>\n{question}\n"
             elif instruction_pos == "Q_end":
               meta_prompt_exemplar_part += f"\nProblem:\n{question}\n<INS>\n"
           else:
             assert optimizer_llm_name.lower() == "text-bison"
-            if instruction_pos == "Q_beginning":
+            if instruction_pos == "Q_begin":
               meta_prompt_exemplar_part += f"\ninput:\n<INS>\n{question}\n"
             elif instruction_pos == "Q_end":
               meta_prompt_exemplar_part += f"\ninput:\n{question}\n<INS>\n"
@@ -269,7 +269,7 @@ def gen_meta_prompt(
       meta_prompt += meta_prompt_old_instruction_part
 
     if optimizer_llm_name.lower() in {"gpt-3.5-turbo", "gpt-4"}:
-      if instruction_pos == "A_beginning":
+      if instruction_pos == "A_begin":
         meta_prompt += (
             "\n\nGenerate a starting sentence that is different from all the"
             " <Start> sentences above, and has a higher score than all the"
@@ -297,13 +297,13 @@ def gen_meta_prompt(
     # when using a pre-trained model as optimizer
     assert meta_prompt_type == "instructions_only"
 
-    assert instruction_pos in {"Q_beginning", "Q_end", "A_beginning"}
-    if instruction_pos == "Q_beginning":
+    assert instruction_pos in {"Q_begin", "Q_end", "A_begin"}
+    if instruction_pos == "Q_begin":
       instruction_pos_description = "at the beginning of the question"
     elif instruction_pos == "Q_end":
       instruction_pos_description = "at the end of the question"
     else:
-      assert instruction_pos == "A_beginning"
+      assert instruction_pos == "A_begin"
       instruction_pos_description = "at the beginning of the answer"
 
     if dataset_name == "gsm8k":
@@ -743,7 +743,7 @@ def run_evolution(**kwargs):
       if meta_prompt_type == "both_instructions_and_exemplars":
         raw_outputs = raw_outputs[:remaining_num_instructions_to_generate]
         if optimizer_llm_name.lower() in {"gpt-3.5-turbo", "gpt-4"}:
-          if instruction_pos == "A_beginning":
+          if instruction_pos == "A_begin":
             start_string = "<Start>"
             end_string = "</Start>"
           else:

@@ -26,7 +26,7 @@ Step 4: run
 ```
 python evaluate_instructions.py \
     --scorer="text-bison" --dataset="gsm8k" \
-    --task="test" --instruction_pos="Q_beginning" \
+    --task="test" --instruction_pos="Q_begin" \
     --evaluate_training_fold=false --evaluate_test_fold=true
 ```
 
@@ -81,7 +81,7 @@ _TASK = flags.DEFINE_string(
 
 _INSTRUCTION_POS = flags.DEFINE_string(
     "instruction_pos",
-    "A_beginning",
+    "A_begin",
     "The position of the instruction to search for.",
 )
 
@@ -102,11 +102,17 @@ def main(_):
       "Take a deep breath and work on this problem step-by-step.",
   ]
   print(f"instructions_to_evaluate: {instructions_to_evaluate}")
+
+  evaluate_training_fold = _EVALUATE_TRAINING_FOLD.value
+  evaluate_test_fold = _EVALUATE_TEST_FOLD.value
+  
+  assert evaluate_training_fold or evaluate_test_fold
   # set ratios of training and test splits
   train_ratio = 0.0
   test_ratio = 1.0
   assert test_ratio > 0.0 and test_ratio <= 1.0
-  assert train_ratio + test_ratio == 1
+  if evaluate_training_fold and evaluate_test_fold:
+    assert train_ratio + test_ratio == 1
 
   openai_api_key = _OPENAI_API_KEY.value
   palm_api_key = _PALM_API_KEY.value
@@ -187,9 +193,9 @@ def main(_):
 
   assert instruction_pos in {
       "before_Q",
-      "Q_beginning",
+      "Q_begin",
       "Q_end",
-      "A_beginning",
+      "A_begin",
   }, (
       "The instruction position should be either before the question, or at the"
       " beginning of the question, at the end of the question, or at the"
@@ -197,10 +203,6 @@ def main(_):
   )
 
   is_gpt_model = bool(scorer_llm_name in {"gpt-3.5-turbo", "gpt-4"})
-  evaluate_training_fold = _EVALUATE_TRAINING_FOLD.value
-  evaluate_test_fold = _EVALUATE_TEST_FOLD.value
-
-  assert evaluate_training_fold or evaluate_test_fold
 
   if dataset_name == "mmlu":
     root_data_folder_path = os.path.join(ROOT_DATA_FOLDER_PATH, "MMLU-data")

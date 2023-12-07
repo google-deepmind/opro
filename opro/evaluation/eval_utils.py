@@ -166,7 +166,7 @@ def gen_prompt(
     instruction,
     idx,
     include_qa=True,
-    instruction_pos="Q_beginning",
+    instruction_pos="Q_begin",
     dataset_name="mmlu",
 ):
   """Generate a prompt from the available exemplars and the given instruction.
@@ -181,7 +181,7 @@ def gen_prompt(
     idx (int): the index of the exemplar in the data list.
     include_qa (bool): whether to include "Q:" and "A:" formats in the prompt.
     instruction_pos (str): where to put the instruction, one of {'before_Q',
-      'Q_beginning', 'Q_end', 'A_beginning'}.
+      'Q_begin', 'Q_end', 'A_begin'}.
     dataset_name (str): one of {"mmlu", "bbh", "gsm8k"}.
 
   Returns:
@@ -200,9 +200,9 @@ def gen_prompt(
   )
   assert instruction_pos in {
       "before_Q",
-      "Q_beginning",
+      "Q_begin",
       "Q_end",
-      "A_beginning",
+      "A_begin",
   }, (
       "The instruction position should be either before the question, or at the"
       " beginning of the question, at the end of the question, or at the"
@@ -227,7 +227,7 @@ def gen_prompt(
         prompt += instruction + "\n"
       prompt += "Q: " + question
       prompt += "\n\nA:"
-    elif instruction_pos == "Q_beginning":
+    elif instruction_pos == "Q_begin":
       if instruction:
         prompt += "Q: " + instruction + "\n"
       else:
@@ -241,14 +241,14 @@ def gen_prompt(
       else:
         prompt += "\n\nA:"
     else:
-      assert instruction_pos == "A_beginning"
+      assert instruction_pos == "A_begin"
       prompt += f"Q: {question}\n\n"
       prompt += "A:"
       if instruction:
         prompt += f" {instruction}"
   else:  # when there're no "Q:" and "A:" in the prompt
-    assert instruction_pos in {"Q_beginning", "Q_end"}
-    if instruction_pos == "Q_beginning":
+    assert instruction_pos in {"Q_begin", "Q_end"}
+    if instruction_pos == "Q_begin":
       if instruction:
         prompt += instruction + "\n"
       prompt += question
@@ -572,7 +572,7 @@ def evaluate_single_instruction(
       otherwise, we may need to prompt again with "So the final answer is" added
       to better extract the final answer for final parsing.
     instruction_pos (str): where to put the instruction, one of {'before_Q',
-      'Q_beginning', 'Q_end', 'A_beginning'}.
+      'Q_begin', 'Q_end', 'A_begin'}.
     is_multiple_choice (bool or list[bool]): whether the questions are multiple
       choice. Boolean indicates the status for the entire task; a list of
       Boolean indicates the status of each question.
@@ -605,9 +605,9 @@ def evaluate_single_instruction(
   )
   assert instruction_pos in {
       "before_Q",
-      "Q_beginning",
+      "Q_begin",
       "Q_end",
-      "A_beginning",
+      "A_begin",
   }, (
       "The instruction position should be either before the question, or at the"
       " beginning of the question, at the end of the question, or at the"

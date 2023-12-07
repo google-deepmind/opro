@@ -26,14 +26,14 @@ Step 4: run
 ```
 python optimize_instructions.py \
     --optimizer="gpt-3.5-turbo" --scorer="text-bison" \
-    --instruction_pos="A_beginning" --dataset="gsm8k" --task="train"
+    --instruction_pos="A_begin" --dataset="gsm8k" --task="train"
 ```
 
 The outputs will then be written to `outputs/optimization-results/` in the opro folder.
 
 Notes:
 
-1. The "instruction_pos" flag must be set to "Q_beginning" or "Q_end" when using
+1. The "instruction_pos" flag must be set to "Q_begin" or "Q_end" when using
 PaLM 2-L-IT as the scorer.
 
 2. Notes on model calling:
@@ -72,7 +72,7 @@ _OPENAI_API_KEY = flags.DEFINE_string(
 _PALM_API_KEY = flags.DEFINE_string("palm_api_key", "", "The PaLM API key.")
 
 _SCORER = flags.DEFINE_string(
-    "scorer", "palm-2-l", "The name of the scorer LLM."
+    "scorer", "text-bison", "The name of the scorer LLM."
 )
 
 _OPTIMIZER = flags.DEFINE_string(
@@ -91,7 +91,7 @@ _TASK = flags.DEFINE_string(
 
 _INSTRUCTION_POS = flags.DEFINE_string(
     "instruction_pos",
-    "A_beginning",
+    "A_begin",
     "The position of the instruction to search for.",
 )
 
@@ -160,15 +160,11 @@ def main(_):
     assert task_name in {"train", "test"}
 
   assert scorer_llm_name in {
-      "palm-2-l",
-      "palm-2-l-it",
       "text-bison",
       "gpt-3.5-turbo",
       "gpt-4",
   }
   assert optimizer_llm_name in {
-      "palm-2-l",
-      "palm-2-l-it",
       "text-bison",
       "gpt-3.5-turbo",
       "gpt-4",
@@ -181,9 +177,9 @@ def main(_):
   instruction_pos = _INSTRUCTION_POS.value
   assert instruction_pos in {
       "before_Q",
-      "Q_beginning",
+      "Q_begin",
       "Q_end",
-      "A_beginning",
+      "A_begin",
   }, (
       "The instruction position should be either before the question, or at the"
       " beginning of the question, at the end of the question, or at the"
