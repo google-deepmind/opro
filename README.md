@@ -54,7 +54,7 @@ Calling the PaLM or GPT APIs for prompt optimization and evaluation may incur un
 
 ## Citation
 
-If you use this code in your research, please cite our [paper](https://arxiv.org/abs/2309.03409):
+If you have used our code in your research, please cite our [paper](https://arxiv.org/abs/2309.03409):
 
 ```
 @article{yang2023large,

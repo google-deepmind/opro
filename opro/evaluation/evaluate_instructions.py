@@ -27,14 +27,15 @@ Step 4: run
 python evaluate_instructions.py \
     --scorer="text-bison" --dataset="gsm8k" \
     --task="test" --instruction_pos="Q_begin" \
-    --evaluate_training_fold=false --evaluate_test_fold=true
+    --evaluate_training_fold=false --evaluate_test_fold=true \
+    --openai_api_key="<your_key>" --palm_api_key="<your_key>"
 ```
 
 The outputs will then be written to `outputs/scorer-outputs/` in the opro folder.
 
 Notes to Step 4: 
-- When using a Google-Cloud-served model as scorer (like text-bison at https://developers.generativeai.google/tutorials/text_quickstart), add `--palm_api_key=<your_key>`
-- When using an OpenAI model as scorer, add `--openai_api_key=”<your_key>”`
+- When using a Google-Cloud-served model as scorer (like text-bison at https://developers.generativeai.google/tutorials/text_quickstart), add `--palm_api_key="<your_key>"`
+- When using an OpenAI model as scorer, add `--openai_api_key="<your_key>"`
 """
 
 import datetime
@@ -517,7 +518,7 @@ def main(_):
     boolean_tasks = set()
     numerical_output_tasks = set()
   else:
-    assert dataset_name in {"multiarith", "svamp", "truthfulqa"}
+    assert dataset_name == "multiarith"
     tasks_all = ["self"]
     multiple_choice_tasks = set()
     boolean_tasks = set()
@@ -605,14 +606,6 @@ def main(_):
       prediction_treat_as_bool = False
       num_examples = len(raw_data)
       original_index = np.sort(np.array(list(raw_data.keys())).astype(int))
-    elif dataset_name == "svamp":
-      task_name = t
-      with open(os.path.join(root_data_folder_path, "SVAMP.json"), "r") as f:
-        raw_data = json.load(f)
-      prediction_treat_as_number = True
-      prediction_treat_as_bool = False
-      num_examples = len(raw_data)
-      original_index = np.arange(num_examples)
     elif dataset_name == "aqua":
       task_name = t
       raw_data = eval_utils.read_jsonl(
@@ -621,17 +614,6 @@ def main(_):
       prediction_treat_as_number = False
       prediction_treat_as_bool = False
       num_examples = len(raw_data)
-      original_index = np.arange(num_examples)
-    elif dataset_name == "truthfulqa":
-      task_name = t
-      raw_data = pd.read_csv(
-          os.path.join(root_data_folder_path, "TruthfulQA.csv"),
-          index_col=0,
-          header=0,
-      )
-      prediction_treat_as_number = False
-      prediction_treat_as_bool = False
-      num_examples = raw_data.shape[0]
       original_index = np.arange(num_examples)
     else:
       assert dataset_name == "multiarith"
@@ -724,16 +706,10 @@ def main(_):
             train_file_path, index=True, header=True
         )
         train_scores = detailed_train_results_df["accuracy"]
-        if dataset_name.lower() == "truthfulqa":
-          print(
-              f"instruction: {instruction}, average training fold accuracy:"
-              f" {np.average(train_scores):.3f}"
-          )
-        else:
-          print(
-              f"instruction: {instruction}, average training fold accuracy (in"
-              f" percentage): {np.average(train_scores) * 100:.1f}"
-          )
+        print(
+            f"instruction: {instruction}, average training fold accuracy (in"
+            f" percentage): {np.average(train_scores) * 100:.1f}"
+        )
       if evaluate_test_fold:
         print("... evaluating the test fold ...")
         detailed_test_results_df = eval_utils.evaluate_single_instruction(
@@ -763,16 +739,10 @@ def main(_):
         print(f"saving test results to\n{test_file_path}")
         detailed_test_results_df.to_csv(test_file_path, index=True, header=True)
         test_scores = detailed_test_results_df["accuracy"]
-        if dataset_name.lower() == "truthfulqa":
-          print(
-              f"instruction: {instruction}, average test fold accuracy:"
-              f" {np.average(test_scores):.3f}"
-          )
-        else:
-          print(
-              f"instruction: {instruction}, average test fold accuracy (in"
-              f" percentage): {np.average(test_scores) * 100:.1f}"
-          )
+        print(
+            f"instruction: {instruction}, average test fold accuracy (in"
+            f" percentage): {np.average(test_scores) * 100:.1f}"
+        )
       if evaluate_training_fold and evaluate_test_fold:
         print("... concatenating training and test fold results ...")
         detailed_all_results_df = pd.concat(
@@ -789,16 +759,10 @@ def main(_):
             train_and_test_file_path, index=True, header=True
         )
         all_scores = detailed_all_results_df["accuracy"]
-        if dataset_name.lower() == "truthfulqa":
-          print(
-              f"instruction: {instruction}, average all fold accuracy:"
-              f" {np.average(all_scores):.3f}"
-          )
-        else:
-          print(
-              f"instruction: {instruction}, average all fold accuracy (in"
-              f" percentage): {np.average(all_scores) * 100:.1f}"
-          )
+        print(
+            f"instruction: {instruction}, average all fold accuracy (in"
+            f" percentage): {np.average(all_scores) * 100:.1f}"
+        )
 
 
 if __name__ == "__main__":
