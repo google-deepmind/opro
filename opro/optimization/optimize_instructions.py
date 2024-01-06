@@ -33,14 +33,11 @@ The outputs will then be written to `outputs/optimization-results/` in the opro 
 
 Notes:
 
-1. The "instruction_pos" flag must be set to "Q_begin" or "Q_end" when using
-PaLM 2-L-IT as the scorer.
-
-2. Notes on model calling:
+1. One or more API keys may need to be provided:
 - When using a Google-Cloud-served model (like text-bison at https://developers.generativeai.google/tutorials/text_quickstart), add `--palm_api_key=<your_key>`
 - When using an OpenAI model, add `--openai_api_key=”<your_key>”`
 
-3. The initial instructions should be provided in the "initial_instructions"
+2. The initial instructions should be provided in the "initial_instructions"
 variable.
 """
 

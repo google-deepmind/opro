@@ -31,7 +31,7 @@ A quickstarter:
 
 `
 python optimize_instructions.py --optimizer="gpt-3.5-turbo" --scorer="text-bison"
---instruction_pos="Q_beginning" --dataset="gsm8k" --task="train" --palm_api_key="<your_palm_api_key>" --openai_api_key="<your_openai_api_key>"
+--instruction_pos="Q_begin" --dataset="gsm8k" --task="train" --palm_api_key="<your_palm_api_key>" --openai_api_key="<your_openai_api_key>"
 `
 
 ### Prompt evaluation
@@ -40,7 +40,7 @@ Use `opro/evaluation/evaluate_instructions.py`, follow the steps at the top.
 A quickstarter:
 
 `
-python evaluate_instructions.py --scorer="text-bison" --dataset="gsm8k" --task="test" --instruction_pos="Q_beginning" --evaluate_training_fold=false --evaluate_test_fold=true --palm_api_key="<your_palm_api_key>"
+python evaluate_instructions.py --scorer="text-bison" --dataset="gsm8k" --task="test" --instruction_pos="Q_begin" --evaluate_training_fold=false --evaluate_test_fold=true --palm_api_key="<your_palm_api_key>"
 `
 
 ## Supported models
