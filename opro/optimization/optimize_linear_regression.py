@@ -22,8 +22,8 @@ python optimize_linear_regression.py --optimizer="text-bison"
 Note:
 - When using a Google-Cloud-served model (like text-bison at
 https://developers.generativeai.google/tutorials/text_quickstart), add
-`--palm_api_key=<your_key>`
-- When using an OpenAI model, add `--openai_api_key=”<your_key>”`
+`--palm_api_key="<your_key>"`
+- When using an OpenAI model, add `--openai_api_key="<your_key>"`
 """
 
 import datetime
@@ -45,8 +45,6 @@ import numpy as np
 import openai
 
 from opro import prompt_utils
-
-OPRO_ROOT_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 _OPENAI_API_KEY = flags.DEFINE_string(
     "openai_api_key", "", "The OpenAI API key."
