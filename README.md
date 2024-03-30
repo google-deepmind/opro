@@ -43,6 +43,14 @@ A quickstarter:
 python evaluate_instructions.py --scorer="text-bison" --dataset="gsm8k" --task="test" --instruction_pos="Q_begin" --evaluate_training_fold=false --evaluate_test_fold=true --palm_api_key="<your_palm_api_key>"
 `
 
+### Linear regression
+Use `opro/optimization/optimize_linear_regression.py`, follow the steps at the top.
+
+
+### Traveling salesman problem
+Use `opro/optimization/optimize_tsp.py`, follow the steps at the top.
+
+
 ## Supported models
 
 The code in this repository currently supports [text-bison](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/text) and [GPT models](https://platform.openai.com/docs/api-reference/introduction). Alternatively, you may serve your own model and plug it in here, similar to the existing prompting APIs in `opro/prompt_utils.py`.
